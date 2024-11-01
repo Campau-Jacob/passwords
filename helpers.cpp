@@ -9,7 +9,7 @@ void generatePassword(string password, int length){
         return;
     }
 
-    const string characters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+    const string characters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
     for(char c : characters){
         generatePassword(password + c, length);

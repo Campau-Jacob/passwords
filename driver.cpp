@@ -1,11 +1,30 @@
-#include "helpers.h"
+//#include "helpers.h"
+#include <iostream>
+#include <string>
+using namespace std;
+
+void generatePassword(string password, int length);
 
 int main(){
-    string pass = "";
-
-    for(int j = 0; j < 5; j++){
-        generatePassword(pass, j);
+    for(int j = 1; j < 6; j++){
+        generatePassword("", j);
     }
 
     return 1;
+}
+
+void generatePassword(string password, int length){
+    if(!password.empty()){
+        cout << password << endl;
+    }
+
+    if(password.length() == length){
+        return;
+    }
+
+    const string characters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+    for(char c : characters){
+        generatePassword(password + c, length);
+    }
 }
