@@ -1,67 +1,84 @@
 #include <iostream>
 #include <string>
+#include <vector>
+#include <openssl/md5.h>
+#include <iomanip>
+#include <sstream>
 using namespace std;
 
 void generatePasswordRec(string password, int length);
-void generatePasswordIt(int length);
+void generatePasswordIt(int length, const string* passes, const string* hashes, string* found);
 
 int main(){
-    for(int j = 1; j < 6; j++){
-        generatePasswordRec("", j);
-    }
+string knownPasses[5] = {"unr", 
+                        "password123", 
+                        "known3", 
+                        "known4", 
+                        "known5"};
+
+string knownHashes[5] = {"f241b830d1944e06d9786f18ed4a431f", 
+                        "918317f46fd5fed8e46c876c7c957a04", 
+                        "517372dae26e82b7867a4513cad6e50e", 
+                        "557884242e3eec9563556678e912307f", 
+                        "bc85ae1dd7e5e9916e87cf71416399ce"};
+
+string foundPasses[5];
 
     for(int j = 1; j < 6; j++){
-        generatePasswordIt(j);
+        generatePasswordIt(j, knownPasses, knownHashes, foundPasses);
     }
 
     return 1;
 }
 
-void generatePasswordRec(string password, int length){
-    if(!password.empty()){
-        cout << password << endl;
-    }
+string generateMD5(const string& password) {
+    unsigned char hash[MD5_DIGEST_LENGTH];
+    MD5((unsigned char*)password.c_str(), password.size(), hash);
 
-    if(password.length() == length){
-        return;
+    std::stringstream ss;
+    for (int i = 0; i < MD5_DIGEST_LENGTH; ++i) {
+        ss << hex << setw(2) << setfill('0') << (int)hash[i];
     }
-
-    const string characters = "abcdefghijklmnopqrstuvwxyz0123456789";
-    const string allCharacters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-
-    for(char c : characters){
-        generatePassword(password + c, length);
-    }
+    
+    return ss.str();
 }
 
-void generatePasswordIt(int length){
+void generatePasswordIt(int length, const string* passes, const string* hashes, string* found){
 	const string allCharacters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    int numCharacters = allCharacters.size();
-    
-    // Initialize indices for each character position to 0
+    const string characters = "abcdefghijklmnopqrstuvwxyz0123456789";
+    int numCharacters = characters.size();
     vector<int> indices(length, 0);
 
     while (true) {
-        // Build and print the current password
-        string password;
-        for (int i = 0; i < length && indices[i] != -1; ++i) {
-            password += allCharacters[indices[i]];
+        // Build the current prefix
+        string prefix;
+        for (int i = 0; i < length; ++i) {
+            prefix += characters[indices[i]];
         }
-        cout << password << endl;
 
-        // Increment the rightmost index
+        // Append prefix to each known password and check the hash
+        for (int i = 0; i < 5; ++i) {
+            string combinedPassword = prefix + passes[i];
+            string md5Hash = generateMD5(combinedPassword);
+
+            // Compare generated hash with known hash
+            if (md5Hash == hashes[i]) {
+                found[i] = combinedPassword;
+                cout << "Match found for hash " << hashes[i] << ": " << combinedPassword << endl;
+            }
+        }
+
+        // Increment indices to generate the next prefix
         int pos = 0;
         while (pos < length) {
             indices[pos]++;
             if (indices[pos] < numCharacters) {
-                break; // No carry, so we can stop
+                break;
             }
-            // Carry over to the next position
             indices[pos] = 0;
             pos++;
         }
-        
-        // If we've carried over all positions, we are done
+
         if (pos == length) {
             break;
         }
