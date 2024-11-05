@@ -6,7 +6,7 @@
 #include <sstream>
 using namespace std;
 
-void generatePasswordRec(string password, int length);
+string generateMD5(const string& password);
 void generatePasswordIt(int length, const string* passes, const string* hashes, string* found);
 
 int main(){
@@ -55,6 +55,14 @@ void generatePasswordIt(int length, const string* passes, const string* hashes, 
         for (int i = 0; i < length; ++i) {
             prefix += characters[indices[i]];
         }
+
+        system("clear");
+        for(int i = 0; i < 5; i++){
+            if(found[i].length() != 0){
+                cout << found << endl;
+            }
+        }
+        cout << endl << prefix << endl;
 
         // Append prefix to each known password and check the hash
         for (int i = 0; i < 5; ++i) {
