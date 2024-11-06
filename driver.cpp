@@ -34,7 +34,6 @@ string generateMD5(const string& password) {
 }
 
 void generatePasswordIt(int length, string* passes, string* hashes, string* found){
-	const string allCharacters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const string characters = "abcdefghijklmnopqrstuvwxyz0123456789";
     int numCharacters = characters.size(), tracker = 0;
     unordered_set<int> foundHashes;
