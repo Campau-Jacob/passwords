@@ -4,16 +4,17 @@
 #include <openssl/md5.h>
 #include <iomanip>
 #include <sstream>
+#include <unordered_set>
 using namespace std;
 
 string generateMD5(const string& password);
-void generatePasswordIt(int length, const string* passes, const string* hashes, string* found);
+void generatePasswordIt(int length, string* passes, string* hashes, string* found);
 
 int main(){
 string knownPasses[5] = {"unr", 
                         "password123", 
-                        "known3", 
-                        "known4", 
+                        "NIST", 
+                        "covid", 
                         "known5"};
 
 string knownHashes[5] = {"f241b830d1944e06d9786f18ed4a431f", 
@@ -24,8 +25,10 @@ string knownHashes[5] = {"f241b830d1944e06d9786f18ed4a431f",
 
 string foundPasses[5];
 
-    for(int j = 1; j < 6; j++){
-        generatePasswordIt(j, knownPasses, knownHashes, foundPasses);
+    generatePasswordIt(5, knownPasses, knownHashes, foundPasses);
+
+    for(int i = 0; i < 5; i++){
+        cout << "Pass: " << foundPasses[i] << endl;
     }
 
     return 1;
@@ -43,36 +46,39 @@ string generateMD5(const string& password) {
     return ss.str();
 }
 
-void generatePasswordIt(int length, const string* passes, const string* hashes, string* found){
+void generatePasswordIt(int length, string* passes, string* hashes, string* found){
 	const string allCharacters = "abcdefghijklmnopqrstuvwxyz0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     const string characters = "abcdefghijklmnopqrstuvwxyz0123456789";
     int numCharacters = characters.size();
+    unordered_set<int> foundHashes;
+    //bool foundIndex[5] = {0,0,0,0,0};
     vector<int> indices(length, 0);
 
-    while (true) {
+    while (foundHashes.size() < 5) {
         // Build the current prefix
         string prefix;
         for (int i = 0; i < length; ++i) {
             prefix += characters[indices[i]];
         }
 
-        system("clear");
         for(int i = 0; i < 5; i++){
-            if(found[i].length() != 0){
+            if(foundHashes.find(i) != foundHashes.end()){
                 cout << found << endl;
             }
         }
-        cout << endl << prefix << endl;
+        cout << prefix << endl;
 
-        // Append prefix to each known password and check the hash
-        for (int i = 0; i < 5; ++i) {
-            string combinedPassword = prefix + passes[i];
-            string md5Hash = generateMD5(combinedPassword);
+        // Try each password in the list and check its hash
+        for (int i = 0; i < 5; i++) {
+            if (foundHashes.find(i) == foundHashes.end()) {  // If this password has not been found
+                string combinedPassword = prefix + passes[i];
+                string md5Hash = generateMD5(combinedPassword);
 
-            // Compare generated hash with known hash
-            if (md5Hash == hashes[i]) {
-                found[i] = combinedPassword;
-                cout << "Match found for hash " << hashes[i] << ": " << combinedPassword << endl;
+                if (md5Hash == hashes[i]) {
+                    found[i] = combinedPassword;
+                    foundHashes.insert(i);  // Mark this hash as found
+                    cout << "Match found for hash " << hashes[i] << ": " << combinedPassword << endl;
+                }
             }
         }
 
