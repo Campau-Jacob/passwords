@@ -11,18 +11,9 @@ string generateMD5(const string& password);
 void generatePasswordIt(int length, string* passes, string* hashes, string* found);
 
 int main(){
-string knownPasses[5] = {"unr", 
-                        "password123", 
-                        "NIST", 
-                        "covid", 
-                        "known5"};
-
-string knownHashes[5] = {"f241b830d1944e06d9786f18ed4a431f", 
-                        "918317f46fd5fed8e46c876c7c957a04", 
-                        "517372dae26e82b7867a4513cad6e50e", 
-                        "557884242e3eec9563556678e912307f", 
-                        "bc85ae1dd7e5e9916e87cf71416399ce"};
-
+string knownPasses[5] = {"unr", "password123", "NIST", "covid", "known5"};
+string knownHashes[5] = {"f241b830d1944e06d9786f18ed4a431f", "918317f46fd5fed8e46c876c7c957a04", "517372dae26e82b7867a4513cad6e50e", 
+                        "557884242e3eec9563556678e912307f", "bc85ae1dd7e5e9916e87cf71416399ce"};
 string foundPasses[5] = {" ", " ", " ", " ", " "};
 
     generatePasswordIt(5, knownPasses, knownHashes, foundPasses);
@@ -91,7 +82,9 @@ void generatePasswordIt(int length, string* passes, string* hashes, string* foun
     }
 
     for(int i = 0; i < 5; i++){
-        cout << "Pass: " << found[i] << endl;
-        cout << "   Hash: " << generateMD5(found[i]) << endl;
+        if(found[i] != " "){
+            cout << "Pass: " << found[i] << endl;
+            cout << "   Hash: " << generateMD5(found[i]) << endl;
+        }
     }
 }
