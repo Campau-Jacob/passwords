@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <sstream>
 #include <unordered_set>
+#include <fstream>
 using namespace std;
 
 string generateMD5(const string& password);
@@ -17,6 +18,8 @@ string knownHashes[5] = {"f241b830d1944e06d9786f18ed4a431f", "918317f46fd5fed8e4
 string foundPasses[5] = {" ", " ", " ", " ", " "};
 
     generatePasswordIt(5, knownPasses, knownHashes, foundPasses);
+    
+    // add saving to a file when answers are found
 
     return 1;
 }
