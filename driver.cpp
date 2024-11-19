@@ -5,7 +5,6 @@
 #include <iomanip>
 #include <sstream>
 #include <unordered_set>
-#include <fstream>
 using namespace std;
 
 string generateMD5(const string& password);
@@ -18,8 +17,6 @@ string knownHashes[5] = {"f241b830d1944e06d9786f18ed4a431f", "918317f46fd5fed8e4
 string foundPasses[5] = {" ", " ", " ", " ", " "};
 
     generatePasswordIt(5, knownPasses, knownHashes, foundPasses);
-    
-    // add saving to a file when answers are found
 
     return 1;
 }
@@ -53,15 +50,17 @@ void generatePasswordIt(int length, string* passes, string* hashes, string* foun
 
         // Try each password in the list and check its hash
         for (int i = 0; i < 5; i++) { //checks each password
-            string combinedPassword = prefix + passes[i];
-            string md5Hash = generateMD5(combinedPassword);
+            if(found[i] == " "){
+                string combinedPassword = prefix + passes[i];
+                string md5Hash = generateMD5(combinedPassword);
 
-            for(int j = 0; j < 5; j++){ //checks each hash for each password
-                if (md5Hash == hashes[j]) {
-                    //cout << "###";
-                    found[tracker] = combinedPassword;
-                    tracker++;
-                    cout << "Match found for hash " << hashes[i] << ": " << combinedPassword << endl;
+                for(int j = 0; j < 5; j++){ //checks each hash for each password
+                    if (md5Hash == hashes[j]) {
+                        found[tracker] = combinedPassword;
+                        tracker++;
+                        cout << "Match found for hash " << hashes[i] << ": " << combinedPassword << endl;
+                        break;
+                    }
                 }
             }
         }
